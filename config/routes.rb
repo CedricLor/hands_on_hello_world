@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   resources :meetups
   get 'static_pages/index'
+  root 'meetups#new'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

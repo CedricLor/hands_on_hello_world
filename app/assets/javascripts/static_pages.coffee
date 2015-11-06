@@ -35,4 +35,4 @@ $ ->
 	ReactDOM.render(
 		React.createElement(OneTimeClickLink),
 		document.getElementById('react-container')
-	)
+	) if document.getElementById('react-container')
