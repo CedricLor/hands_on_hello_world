@@ -118,7 +118,10 @@ DOM = React.DOM
 
 			DOM.fieldset null,
 				DOM.legend null, "Guests"
-				for guest, n in @state.meetup.guests
+				React.createElement(
+					Separator
+					{}
+					for guest, n in @state.meetup.guests
 
-					React.createElement FormInputWithLabel, id: "email_#{n}", key: "guests-#{n}", onChange: @guestEmailChanged.bind(null, n), value: guest, placeholder: "Email address of invitee", labelText: "Email", inputType: "email"
-
+						React.createElement FormInputWithLabel, id: "email_#{n}", key: "guests-#{n}", onChange: @guestEmailChanged.bind(null, n), value: guest, placeholder: "Email address of invitee", labelText: "Email", inputType: "email"
+				)
