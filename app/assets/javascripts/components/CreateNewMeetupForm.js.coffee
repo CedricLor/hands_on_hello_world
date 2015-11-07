@@ -35,7 +35,7 @@ DOM = React.DOM
 		@state.meetup.warnings[fieldName] = validator( @state.meetup[fieldName] )
 
 	seoChanged: (seoText) ->
-		@state.meetup.seoText = setText
+		@state.meetup.seoText = seoText
 		@forceUpdate()
 
 	computeDefaultSeoText: () ->
@@ -44,7 +44,7 @@ DOM = React.DOM
 		words.push(@state.meetup.date.getFullYear().toString())
 		words.filter( (string) -> string.trim().length > 0).join("-").toLowerCase()
 
-	validateAll: (newState) ->
+	validateAll: () ->
 		for field in ['title']
 			@validateField(field)
 
