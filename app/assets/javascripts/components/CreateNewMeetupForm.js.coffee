@@ -44,7 +44,7 @@ DOM = React.DOM
 		words.push(@state.meetup.date.getFullYear().toString())
 		words.filter( (string) -> string.trim().length > 0).join("-").toLowerCase()
 
-	validateAll: () ->
+	validateAll: (newState) ->
 		for field in ['title']
 			@validateField(field)
 
