@@ -67,7 +67,7 @@ class @CreateNewMeetup
 			}})
 
 	render: () ->
-		virt_element = React.createElement CreateNewMeetupForm, meetup = @meetup, fieldChanged: @fieldChanged.bind(@), dateChanged: @dateChanged.bind(@), seoChanged: @seoChanged.bind(@), formSubmitted: @formSubmitted.bind(@)
+		virt_element = React.createElement CreateNewMeetupForm, meetup: @meetup, fieldChanged: @fieldChanged.bind(@), dateChanged: @dateChanged.bind(@), seoChanged: @seoChanged.bind(@), formSubmitted: @formSubmitted.bind(@)
 		ReactDOM.render(virt_element, @element)
 
 
@@ -75,9 +75,9 @@ class @CreateNewMeetup
 	displayName: "CreateNewMeetupForm"
 
 	computeDefaultSeoText: () ->
-		words = @props.title.split(/\s+/)
-		words.push(monthName(@props.date.getMonth()))
-		words.push(@props.date.getFullYear().toString())
+		words = @props.meetup.title.split(/\s+/)
+		words.push(monthName(@props.meetup.date.getMonth()))
+		words.push(@props.meetup.date.getFullYear().toString())
 		words.filter( (string) -> string.trim().length > 0).join("-").toLowerCase()
 
 	render: () ->
@@ -88,10 +88,10 @@ class @CreateNewMeetup
 			DOM.fieldset null,
 				DOM.legend null, "New Meetup"
 
-				React.createElement FormInputWithLabel, id: "title", onChange: @props.children.fieldChanged, value: @props.title, placeholder: "Meetup title", labelText: "Title", warning: @props.warnings.title
-				React.createElement FormInputWithLabel, id: "description", onChange: @props.children.fieldChanged, value: @props.description, placeholder: "Meetup description", labelText: "Description", elementType: "textarea"
-				React.createElement DateWithLabel, onChange: @props.children.dateChanged, date: @props.date
-				React.createElement FormInputWithLabelAndReset, id: "seo", onChange: @props.children.seoChanged, value: (if @props.seoText? then @props.seoText else @computeDefaultSeoText()), placeholder: "SEO Text", labelText: "seo"
+				React.createElement FormInputWithLabel, id: "title", onChange: @props.fieldChanged, value: @props.meetup.title, placeholder: "Meetup title", labelText: "Title", warning: @props.meetup.warnings.title
+				React.createElement FormInputWithLabel, id: "description", onChange: @props.fieldChanged, value: @props.meetup.description, placeholder: "Meetup description", labelText: "Description", elementType: "textarea"
+				React.createElement DateWithLabel, onChange: @props.dateChanged, date: @props.meetup.date
+				React.createElement FormInputWithLabelAndReset, id: "seo", onChange: @props.seoChanged, value: (if @props.meetup.seoText? then @props.meetup.seoText else @computeDefaultSeoText()), placeholder: "SEO Text", labelText: "seo"
 
 				DOM.div
 					className: "form-group"
@@ -100,6 +100,6 @@ class @CreateNewMeetup
 						DOM.button
 							type: "button"
 							className: "btn btn-primary"
-							onClick: @props.children.formSubmitted
+							onClick: @props.formSubmitted
 							"Save"
 
