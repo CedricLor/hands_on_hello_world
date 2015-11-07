@@ -9,6 +9,7 @@ DOM = React.DOM
 				description: ""
 				date: new Date()
 				seoText: null
+				guests: [""]
 				warnings: {
 					title: null
 				},				
@@ -44,12 +45,28 @@ DOM = React.DOM
 		words.push(@state.meetup.date.getFullYear().toString())
 		words.filter( (string) -> string.trim().length > 0).join("-").toLowerCase()
 
+	guestEmailChanged: (indexNumber, event) ->
+		guests = @state.meetup.guests
+		guests[indexNumber] = event.target.value
+
+		lastEmail = guests[guests.length-1]
+		penultimateEmail = guests[guests.length-2]
+
+		if (lastEmail != "")
+			guests.push("")
+		if (guests.length >= 2 && lastEmail == "" && penultimateEmail == "")
+			guests.pop()
+
+		@forceUpdate()			
+
 	validateAll: () ->
 		for field in ['title']
 			@validateField(field)
 
 	formSubmitted: (event) ->
 		event.preventDefault()
+
+		console.log(@state.meetup)
 
 		@validateAll()
 		@forceUpdate()
@@ -64,14 +81,16 @@ DOM = React.DOM
 			contentType: "application/json",
 			processData: false,
 			data: JSON.stringify({meetup: {
-				title: @state.meetup.title,
-				description: @state.meetup.description,
+				title: @state.meetup.title
+				description: @state.meetup.description
 				date: [
 					@state.meetup.date.getFullYear(),
 					@state.meetup.date.getMonth()+1,
 					@state.meetup.date.getDate()
 				].join("-")
 				seo: @state.meetup.seoText || @computeDefaultSeoText()
+				guests: @state.meetup.guests
+
 			}})
 
 	render: ->
@@ -96,3 +115,10 @@ DOM = React.DOM
 							className: "btn btn-primary"
 							onClick: @formSubmitted
 							"Save"
+
+			DOM.fieldset null,
+				DOM.legend null, "Guests"
+				for guest, n in @state.meetup.guests
+
+					React.createElement FormInputWithLabel, id: "email_#{n}", key: "guests-#{n}", onChange: @guestEmailChanged.bind(null, n), value: guest, placeholder: "Email address of invitee", labelText: "Email", inputType: "email"
+

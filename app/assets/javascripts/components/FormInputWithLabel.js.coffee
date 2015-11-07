@@ -25,11 +25,21 @@ DOM = React.DOM
 					type: @tagType()
 					value: @props.value
 					onChange: @props.onChange
+	# tagType: ->
+	# 	{
+	# 		"input": @props.inputType,
+	# 		"textarea": null
+	# 	}[@props.elementType]
 	tagType: ->
 		{
-			"input": @props.inputType,
+			"input": @tagSubType(),
 			"textarea": null
 		}[@props.elementType]
+	tagSubType: ->
+		{
+			"text": @props.inputType,
+			"email": "email"
+		}[@props.inputType]
 	warning: ->
 		return null unless @props.warning
 		DOM.label
