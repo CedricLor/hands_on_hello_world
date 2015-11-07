@@ -4,60 +4,59 @@ DOM = React.DOM
 	displayName: "CreateNewMeetupForm"
 	getInitialState: -> 
 		{
-			title: ""
-			description: ""
-			date: new Date()
-			seoText: null
-			warnings: {
-				# text: null
-			},
+			meetup: {
+				title: ""
+				description: ""
+				date: new Date()
+				seoText: null
+				warnings: {
+					title: null
+				},				
+			}
 		}
 
 	dateChanged: (newDate) ->
-		@setState(date: newDate)
+		@state.meetup.date = newDate
+		@forceUpdate()
 
 	fieldChanged: (event) ->
-		newState = $.extend(true, {}, @state)
 		inputText = event.target.value
 		fieldName = event.target.name
-		newState[fieldName] = inputText
-		newState['warnings']["#{fieldName}"] = @validateField(fieldName, inputText)
-		@setState(newState)
+		@state.meetup[fieldName] = inputText
+		@validateField(fieldName)
+		@forceUpdate()
 
-		# @validateField(event.target.name, event.target.value)
-		# @setState "#{event.target.name}": event.target.value
-
-	validateField: (fieldName, value) ->
+	validateField: (fieldName) ->
 		validator = {
 			title: (text) ->
 				if /\S/.test(text) then null else "cannot be blank"
 		}[fieldName]
 		return unless validator
-		validator(value)
-		# warnings = @state.warnings
-		# warnings[fieldName] = validator(value)
-		# @setState(warnings: warnings)
+		@state.meetup.warnings[fieldName] = validator( @state.meetup[fieldName] )
 
 	seoChanged: (seoText) ->
-		@setState(seoText: seoText)
+		@state.meetup.seoText = setText
+		@forceUpdate()
 
 	computeDefaultSeoText: () ->
-		words = @state.title.toLowerCase().split(/\s+/)
-		words.push(monthName(@state.date.getMonth()))
-		words.push(@state.date.getFullYear().toString())
+		words = @state.meetup.title.split(/\s+/)
+		words.push(monthName(@state.meetup.date.getMonth()))
+		words.push(@state.meetup.date.getFullYear().toString())
 		words.filter( (string) -> string.trim().length > 0).join("-").toLowerCase()
 
 	validateAll: (newState) ->
 		for field in ['title']
-			newState['warnings'][field] = @validateField(field, newState[field])
-		newState
+			@validateField(field)
 
 	formSubmitted: (event) ->
 		event.preventDefault()
-		newState = @validateAll( $.extend(true, {}, @state) )
-		@setState(newState)
-		for own key of newState.warnings
-			return if newState.warnings[key]
+
+		@validateAll()
+		@forceUpdate()
+
+		for own key of @state.meetup
+			return if @state.meetup.warnings[key]
+
 		$.ajax
 			url: "/meetups.json",
 			type: "post",
@@ -65,10 +64,14 @@ DOM = React.DOM
 			contentType: "application/json",
 			processData: false,
 			data: JSON.stringify({meetup: {
-				title: @state.title,
-				description: @state.description,
-				date: "#{@state.date.getFullYear()}-#{@state.date.getMonth()+1}-#{@state.date.getDate()}",
-				seo: @state.seoText || @computeDefaultSeoText()
+				title: @state.meetup.title,
+				description: @state.meetup.description,
+				date: [
+					@state.meetup.date.getFullYear(),
+					@state.meetup.date.getMonth()+1,
+					@state.meetup.date.getDate()
+				].join("-")
+				seo: @state.meetup.seoText || @computeDefaultSeoText()
 			}})
 
 	render: ->
@@ -79,10 +82,10 @@ DOM = React.DOM
 			DOM.fieldset null,
 				DOM.legend null, "New Meetup"
 
-				React.createElement FormInputWithLabel, id: "title", onChange: @fieldChanged, value: @state.title, placeholder: "Meetup title", labelText: "Title", warning: @state.warnings.title
-				React.createElement FormInputWithLabel, id: "description", onChange: @fieldChanged, placeholder: "Meetup description", labelText: "Description", elementType: "textarea"
-				React.createElement DateWithLabel, onChange: @dateChanged, date: @state.date
-				React.createElement FormInputWithLabelAndReset, id: "seo", onChange: @seoChanged, value: (if @state.seoText? then @state.seoText else @computeDefaultSeoText()), placeholder: "SEO Text", labelText: "seo"
+				React.createElement FormInputWithLabel, id: "title", onChange: @fieldChanged, value: @state.meetup.title, placeholder: "Meetup title", labelText: "Title", warning: @state.meetup.warnings.title
+				React.createElement FormInputWithLabel, id: "description", onChange: @fieldChanged, value: @state.meetup.description, placeholder: "Meetup description", labelText: "Description", elementType: "textarea"
+				React.createElement DateWithLabel, onChange: @dateChanged, date: @state.meetup.date
+				React.createElement FormInputWithLabelAndReset, id: "seo", onChange: @seoChanged, value: (if @state.meetup.seoText? then @state.meetup.seoText else @computeDefaultSeoText()), placeholder: "SEO Text", labelText: "seo"
 
 				DOM.div
 					className: "form-group"
