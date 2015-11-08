@@ -4,7 +4,12 @@
 
 
 $ ->
+	container = document.getElementById("CreateNewMeetup")
+	technologies = JSON.parse( container.dataset.technologies )
 	ReactDOM.render(
-		React.createElement(CreateNewMeetupForm),
-		document.getElementById("CreateNewMeetup")
+		React.createElement(
+			CreateNewMeetupForm
+			{technologies: technologies}
+		),
+		container
 	)

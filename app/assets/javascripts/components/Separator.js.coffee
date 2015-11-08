@@ -3,7 +3,6 @@ DOM = React.DOM
 @Separator = React.createClass
 	displayName: "Separator"
 	render: () ->
-		console.log(@props.children)
 		children = []
 		for child, i in @props.children
 			children.push( child )

@@ -2,7 +2,7 @@ DOM = React.DOM
 
 @CreateNewMeetupForm = React.createClass
 	displayName: "CreateNewMeetupForm"
-	getInitialState: -> 
+	getInitialState: ->
 		{
 			meetup: {
 				title: ""
@@ -10,6 +10,7 @@ DOM = React.DOM
 				date: new Date()
 				seoText: null
 				guests: [""]
+				technology: @props.technologies[0].name
 				warnings: {
 					title: null
 				},				
@@ -66,8 +67,6 @@ DOM = React.DOM
 	formSubmitted: (event) ->
 		event.preventDefault()
 
-		console.log(@state.meetup)
-
 		@validateAll()
 		@forceUpdate()
 
@@ -90,7 +89,7 @@ DOM = React.DOM
 				].join("-")
 				seo: @state.meetup.seoText || @computeDefaultSeoText()
 				guests: @state.meetup.guests
-
+				technology: @state.meetup.technology
 			}})
 
 	render: ->
@@ -104,6 +103,22 @@ DOM = React.DOM
 				React.createElement FormInputWithLabel, id: "title", onChange: @fieldChanged, value: @state.meetup.title, placeholder: "Meetup title", labelText: "Title", warning: @state.meetup.warnings.title
 				React.createElement FormInputWithLabel, id: "description", onChange: @fieldChanged, value: @state.meetup.description, placeholder: "Meetup description", labelText: "Description", elementType: "textarea"
 				React.createElement DateWithLabel, onChange: @dateChanged, date: @state.meetup.date
+
+				DOM.div
+					className: "form-group"
+					DOM.label
+						htmlFor: "technology"
+						className: "col-lg-2 control-label"
+						"Technology"
+					DOM.div
+						className: "col-lg-10"
+						DOM.select
+							className: "form-control"
+							onChange: @fieldChanged
+							value: @state.meetup.technology
+							name: "technology"
+							DOM.option(value: tech.name, key: tech.id, tech.name) for tech in @props.technologies
+
 				React.createElement FormInputWithLabelAndReset, id: "seo", onChange: @seoChanged, value: (if @state.meetup.seoText? then @state.meetup.seoText else @computeDefaultSeoText()), placeholder: "SEO Text", labelText: "seo"
 
 				DOM.div

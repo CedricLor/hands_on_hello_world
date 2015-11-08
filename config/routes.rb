@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :technologies
   resources :meetups
   get 'static_pages/index'
   root 'meetups#new'
