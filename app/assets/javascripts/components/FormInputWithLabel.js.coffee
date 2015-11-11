@@ -25,11 +25,6 @@ DOM = React.DOM
 					type: @tagType()
 					value: @props.value
 					onChange: @props.onChange
-	# tagType: ->
-	# 	{
-	# 		"input": @props.inputType,
-	# 		"textarea": null
-	# 	}[@props.elementType]
 	tagType: ->
 		{
 			"input": @tagSubType(),
